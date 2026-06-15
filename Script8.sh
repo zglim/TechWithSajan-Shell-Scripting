@@ -1,30 +1,75 @@
 #!/bin/bash
-a=10
-b=20
+# ============================================================
+# Script8.sh — 演示两个整数的算术运算和大小比较
+#
+# 用法:
+#   ./Script8.sh [a b]
+#
+# 若未提供参数，则使用默认值 a=10, b=20
+# 若提供一个参数，必须同时提供两个参数
+# ============================================================
 
-val1=`expr $a + $b`
-echo "a + b : $val1"
-val2=`expr $a - $b`
-echo "a - b : $val2"
-val3=`expr $a \* $b`
-echo "a * b : $val3"
-val4=`expr $b / $a`
-echo "b / a : $val4"
-val5=`expr $b % $a`
-echo "b % a : $val5"
-
-
-
-if [ $a == $b ]
-then
- echo "a is equal to b"
-elif [ $a -gt $b ]
-then
- echo "a is greater than b"
-elif [ $a -lt $b ]
-then
- echo "a is less than b"
+# ---------- 参数解析 ----------
+if [[ $# -eq 0 ]]; then
+    a=10
+    b=20
+    echo "未提供参数，使用默认值: a=$a, b=$b"
+elif [[ $# -eq 2 ]]; then
+    a="$1"
+    b="$2"
 else
- echo "None of the condition met"
+    echo "错误: 参数数量不正确。" >&2
+    echo "用法: $0 [a b]" >&2
+    echo "示例: $0 10 20" >&2
+    exit 1
 fi
 
+# ---------- 输入校验: 必须为整数 ----------
+is_integer() {
+    [[ "$1" =~ ^-?[0-9]+$ ]]
+}
+
+if ! is_integer "$a"; then
+    echo "错误: '$a' 不是有效的整数。" >&2
+    exit 1
+fi
+
+if ! is_integer "$b"; then
+    echo "错误: '$b' 不是有效的整数。" >&2
+    exit 1
+fi
+
+echo "=============================="
+echo "  a = $a , b = $b"
+echo "=============================="
+
+# ---------- 算术运算 ----------
+sum=$((a + b))
+diff=$((a - b))
+prod=$((a * b))
+
+echo "a + b = $sum"
+echo "a - b = $diff"
+echo "a * b = $prod"
+
+# 除法与取模需要检查除数是否为 0
+if [[ "$b" -eq 0 ]]; then
+    echo "a / b = 错误: 除数不能为 0"
+    echo "a % b = 错误: 除数不能为 0"
+else
+    quot=$((a / b))
+    mod=$((a % b))
+    echo "a / b = $quot"
+    echo "a % b = $mod"
+fi
+
+# ---------- 大小比较 ----------
+echo "------------------------------"
+if [[ "$a" -eq "$b" ]]; then
+    echo "结果: a 等于 b"
+elif [[ "$a" -gt "$b" ]]; then
+    echo "结果: a 大于 b"
+elif [[ "$a" -lt "$b" ]]; then
+    echo "结果: a 小于 b"
+fi
+echo "=============================="
